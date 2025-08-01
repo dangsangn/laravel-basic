@@ -27,14 +27,14 @@
         <div class="mb-2">
             <x-input-label for="phone" :value="__('Phone')" />
             <x-text-input id="phone" name="phone" type="text" class="mt-1 block w-full" :value="old('phone', $user->phone)"
-                required autofocus autocomplete="phone" />
+                autofocus autocomplete="phone" />
             <x-input-error class="mt-2" :messages="$errors->get('phone')" />
         </div>
 
         <div class="mb-2">
             <x-input-label for="address" :value="__('Address')" />
             <x-text-input id="address" name="address" type="text" class="mt-1 block w-full" :value="old('address', $user->address)"
-                required autofocus autocomplete="address" />
+                autofocus autocomplete="address" />
             <x-input-error class="mt-2" :messages="$errors->get('address')" />
         </div>
 
@@ -67,9 +67,11 @@
         <div class="mb-2">
             <x-input-label for="photo" :value="__('Photo')" />
             <x-text-input id="photo" name="photo" type="file" class="mt-1 block w-full" :value="old('photo', $user->photo)"
-                required autofocus autocomplete="photo" />
+                autofocus autocomplete="photo" />
             <x-input-error class="mt-2" :messages="$errors->get('photo')" />
-            <img id="showPhoto" src="{{ empty($user->photo) ? url('upload/default-image.webp') : url('upload/user_images/'.$user->photo) }}" alt="User Photo" class="mt-2 w-32 h-32 rounded-full object-cover img-thumbnail">
+            <img id="showPhoto"
+                src="{{ empty($user->photo) ? url('upload/default-image.webp') : url('upload/user_images/' . $user->photo) }}"
+                alt="User Photo" class="mt-2 w-32 h-32 rounded-full object-cover img-thumbnail">
         </div>
 
         <div class="flex items-center gap-4">
@@ -84,15 +86,15 @@
 </section>
 
 <script type="text/javascript">
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function() {
         const photoInput = document.getElementById('photo');
         const showPhoto = document.getElementById('showPhoto');
 
-        photoInput.addEventListener('change', function () {
+        photoInput.addEventListener('change', function() {
             const file = this.files[0];
             if (file) {
                 const reader = new FileReader();
-                reader.onload = function (e) {
+                reader.onload = function(e) {
                     showPhoto.src = e.target.result;
                 }
                 reader.readAsDataURL(file);
@@ -101,5 +103,4 @@
             }
         });
     });
-
 </script>
