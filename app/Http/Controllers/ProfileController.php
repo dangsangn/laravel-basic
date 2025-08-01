@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -16,7 +17,7 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): View
     {
-        return view('profile.edit', [
+        return view('admin.profile.edit', [
             'user' => $request->user(),
         ]);
     }
@@ -28,13 +29,35 @@ class ProfileController extends Controller
     {
         $request->user()->fill($request->validated());
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+        $idUser = Auth::user()->id;
+        $data = User::find($idUser);
+        $data->name = $request->name;
+        $data->email = $request->email;
+        $data->address = $request->address;
+        $data->phone = $request->phone;
+        $oldPhoto = $data->photo;
+        if ($request->hasFile(('photo'))) {
+            // save photo into folder uploads
+            $file = $request->file('photo');
+            $filename = time().'.'.$file->getClientOriginalExtension();
+            $file->move(public_path('upload/user_images'), $filename);
+            $data->photo = $filename;
+            // delete old photo if exists
+            if ($filename !== $oldPhoto && $oldPhoto) {
+                $this->deleteOldPhoto($oldPhoto);
+            }
         }
 
-        $request->user()->save();
-
+        $data->save();
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
+    }
+
+    private function deleteOldPhoto(string $oldPhoto): void
+    {
+        $fullPath = public_path('upload/user_images/'.$oldPhoto);
+        if ($fullPath && file_exists($fullPath)) {
+            unlink($fullPath);
+        }
     }
 
     /**

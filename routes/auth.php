@@ -56,4 +56,11 @@ Route::middleware('auth')->group(function () {
 
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
         ->name('logout');
+
+Route::get('verify', [AuthenticatedSessionController::class, 'showVerificationForm'])
+    ->name('custom.verification.form');
+
+Route::post('verify', [AuthenticatedSessionController::class, 'handleVerificationForm'])
+    ->name('custom.verification.verify');
+
 });

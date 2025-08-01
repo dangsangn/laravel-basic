@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\View\View;
+use App\Models\User;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -27,17 +28,25 @@ class AuthenticatedSessionController extends Controller
     public function store(LoginRequest $request): RedirectResponse
     {
 
-        // $request->authenticate();
-        // $request->session()->regenerate();
-        // return redirect()->intended(route('dashboard', absolute: false));
+        $request->authenticate();
+        $request->session()->regenerate();
+        return redirect()->intended(route('dashboard', absolute: false));
+    }
 
+    public function loginWith2FA(LoginRequest $request): RedirectResponse
+    {
         $credentials = $request->only('email', 'password');
         if (Auth::attempt($credentials)) {
             $user = Auth::user();
             $verificationCode = random_int(100000, 999999);
             session(['verification_code' => $verificationCode, 'user_id' => $user->id]);
-            Mail::to($user->email)->send(new VerificationCodeMail());
-            Auth::logout(); // Log out the user after sending the verification code
+
+            Mail::to($user->email)->send(new VerificationCodeMail($verificationCode));
+
+
+            // Log out the user after sending the verification code
+            // Auth::logout();
+
             return redirect()->route('custom.verification.form')->with('status', 'Verification code send to your mail');
         }
 
@@ -45,6 +54,23 @@ class AuthenticatedSessionController extends Controller
             'email' => 'The provided credentials do not match our records.',
         ])->onlyInput('email');
 
+    }
+
+    public function showVerificationForm(): View
+    {
+        return view('auth.verify');
+    }
+
+    public function handleVerificationForm(Request $request)
+    {
+        $request->validate(['code' => 'required|numeric']);
+        if ($request->code == session('verification_code')) {
+
+            Auth::loginUsingId(session('user_id'));
+            session()->forget(['verification_code', 'user_id']);
+            return redirect()->intended('/dashboard');
+        }
+        return back()->withError(['code' => 'Invalid verification code'])->onlyInput('code');
     }
 
     /**
