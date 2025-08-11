@@ -4,7 +4,7 @@
         <div class="col-8 col-sm-auto ">
           <div class="header-logo1 ">
             <a href="index.html">
-              <img src="assets/images/logo/logo-dark.svg" alt="logo">
+              <img src="{{ asset('frontend/assets/images/logo/logo-dark.svg') }}" alt="logo">
             </a>
           </div>
         </div>
@@ -108,7 +108,7 @@
           <div class="lonyo-header-info-wraper2">
             <div class="lonyo-header-info-content">
               <ul>
-                <li><a href="sign-in.html">Log in</a></li>
+                <li><a href="{{route('login')}}">Log in</a></li>
               </ul>
             </div>
             <a class="lonyo-default-btn lonyo-header-btn" href="conact-us.html">Book a demo</a>

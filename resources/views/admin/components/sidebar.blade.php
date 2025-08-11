@@ -45,6 +45,24 @@
                       </div>
                   </li>
 
+                  <li>
+                      <a href="#sidebarReviews" data-bs-toggle="collapse">
+                          <i data-feather="home"></i>
+                          <span> Reviews </span>
+                          <span class="menu-arrow"></span>
+                      </a>
+                      <div class="collapse" id="sidebarReviews">
+                          <ul class="nav-second-level">
+                              <li>
+                                  <a href="{{ route('reviews.index') }}" class="tp-link">Show all</a>
+                              </li>
+                              <li>
+                                  <a href="ecommerce.html" class="tp-link">E-commerce</a>
+                              </li>
+                          </ul>
+                      </div>
+                  </li>
+
                   <!-- <li>
                                 <a href="landing.html" target="_blank">
                                     <i data-feather="globe"></i>
